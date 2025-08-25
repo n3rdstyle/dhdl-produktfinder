@@ -11,7 +11,6 @@ import {
   ShoppingCart,
   Mail,
 } from "lucide-react";
-import { Input } from "./components/ui/input";
 import { useState, useEffect, useRef } from "react";
 import { apiService } from "./services/api";
 import { ProductMapper, type DummyProduct } from "./services/productMapper";
@@ -599,7 +598,7 @@ export default function App() {
     useState<File | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [showSplitScreen, setShowSplitScreen] = useState(false);
-  const [searchMethod, setSearchMethod] = useState<
+  const [, setSearchMethod] = useState<
     "text" | "image" | null
   >(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -961,30 +960,30 @@ export default function App() {
     }
   };
 
-  const handlePopularProductsClick = async () => {
-    setCurrentSearchTerm("Beliebte Produkte");
-    setSearchMethod("text");
-    setShowSplitScreen(true);
-    setShowProductSearch(true);
-    setIsLoading(true);
+  // const handlePopularProductsClick = async () => {
+  //   setCurrentSearchTerm("Beliebte Produkte");
+  //   setSearchMethod("text");
+  //   setShowSplitScreen(true);
+  //   setShowProductSearch(true);
+  //   setIsLoading(true);
 
-    try {
-      // Try API search for popular products
-      const apiResponse = await apiService.searchByText("beliebte erfolgreiche Höhle der Löwen Produkte");
+  //   try {
+  //     // Try API search for popular products
+  //     const apiResponse = await apiService.searchByText("beliebte erfolgreiche Höhle der Löwen Produkte");
       
-      if (apiResponse && apiResponse.results && apiResponse.results.length > 0) {
-        const mappedProducts = ProductMapper.mapApiProductsToDummy(apiResponse.results);
-        setFilteredProducts(mappedProducts.slice(0, 6)); // Show only 6 most relevant
-      } else {
-        setFilteredProducts([]);
-      }
-    } catch (error) {
-      console.error('Popular products search error:', error);
-      setFilteredProducts([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (apiResponse && apiResponse.results && apiResponse.results.length > 0) {
+  //       const mappedProducts = ProductMapper.mapApiProductsToDummy(apiResponse.results);
+  //       setFilteredProducts(mappedProducts.slice(0, 6)); // Show only 6 most relevant
+  //     } else {
+  //       setFilteredProducts([]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Popular products search error:', error);
+  //     setFilteredProducts([]);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleAllProductsClick = async () => {
     setCurrentSearchTerm("Alle Produkte");
@@ -1191,118 +1190,118 @@ export default function App() {
   };
 
   // Test function to compare different search approaches
-  const testSearchComparison = async () => {
-    try {
-      console.log('🧪 === SEARCH COMPARISON TEST ===');
-      
-      // Test 1: Search for "aero" to find Aerostiletto
-      console.log('🔍 Test 1: Searching for "aero"...');
-      const aeroResponse = await apiService.searchByText("aero", 0);
-      console.log(`📊 "aero" search returned: ${aeroResponse.results?.length || 0} results`);
-      const aeroProducts = aeroResponse.results?.map(p => ({
-        id: p.id,
-        name: p.payload.name,
-        score: p.score
-      })) || [];
-      console.log('🎯 "aero" products:', aeroProducts);
-      
-      // Test 2: Empty search (current "All Products" approach)
-      console.log('🔍 Test 2: Empty search (current All Products)...');
-      const emptyResponse = await apiService.searchByText("", 0);
-      console.log(`📊 Empty search returned: ${emptyResponse.results?.length || 0} results`);
-      const emptyProducts = emptyResponse.results?.map(p => ({
-        id: p.id,
-        name: p.payload.name,
-        score: p.score
-      })) || [];
-      console.log('🎯 Empty search products:', emptyProducts);
-      
-      // Test 3: Search for "*" (wildcard)
-      console.log('🔍 Test 3: Searching for "*" (wildcard)...');
-      const wildcardResponse = await apiService.searchByText("*", 0);
-      console.log(`📊 "*" search returned: ${wildcardResponse.results?.length || 0} results`);
-      
-      // Test 4: Use specific known product names to find all products
-      const knownProductNames = [
-        "Fyta", "Aerostiletto", "zoltrasports", "annux", "bedrop", "bee", "dogs-guard",
-        // Add some variations and partial matches
-        "fyta", "aero", "zoltra", "bee", "dog", "guard",
-        // Try some other known patterns
-        "stiletto", "sports", "drop", "bed"
-      ];
-      const allUniqueProducts = new Map();
-      
-      // Add products from all searches to find complete set
-      [aeroResponse, emptyResponse, wildcardResponse].forEach(response => {
-        response.results?.forEach(product => {
-          allUniqueProducts.set(product.id, product);
-        });
-      });
-      
-      for (const searchTerm of knownProductNames) {
-        console.log(`🔍 Testing search term: "${searchTerm}"`);
-        try {
-          const response = await apiService.searchByText(searchTerm, 0);
-          console.log(`📊 "${searchTerm}" search returned: ${response.results?.length || 0} results`);
-          
-          const sizeBefore = allUniqueProducts.size;
-          response.results?.forEach(product => {
-            allUniqueProducts.set(product.id, product);
-          });
-          const sizeAfter = allUniqueProducts.size;
-          
-          if (sizeAfter > sizeBefore) {
-            const newProducts = sizeAfter - sizeBefore;
-            console.log(`🆕 "${searchTerm}" found ${newProducts} NEW products! Total unique: ${sizeAfter}`);
-            
-            // Log the names of new products found
-            const newProductNames = response.results
-              ?.filter(p => !Array.from(allUniqueProducts.values()).slice(0, sizeBefore).some(existing => existing.id === p.id))
-              .map(p => p.payload.name)
-              .slice(0, 3); // First 3 new names
-            if (newProductNames?.length) {
-              console.log(`🎯 New products include: ${newProductNames.join(', ')}${newProductNames.length < response.results.length - (sizeAfter - newProducts) ? '...' : ''}`);
-            }
-          }
-        } catch (error) {
-          console.log(`❌ Search for "${searchTerm}" failed:`, error);
-        }
-      }
-      
-      console.log(`🎯 Total unique products found across all searches: ${allUniqueProducts.size}`);
-      
-      // Compare results
-      console.log('🔍 === COMPARISON RESULTS ===');
-      const aeroNames = new Set(aeroProducts.map(p => p.name));
-      const emptyNames = new Set(emptyProducts.map(p => p.name));
-      
-      const onlyInAero = aeroProducts.filter(p => !emptyNames.has(p.name));
-      const onlyInEmpty = emptyProducts.filter(p => !aeroNames.has(p.name));
-      
-      console.log('🔥 Products ONLY in "aero" search:', onlyInAero);
-      console.log('🔥 Products ONLY in empty search:', onlyInEmpty);
-      
-      if (onlyInAero.length > 0) {
-        console.log('✅ FOUND THE ISSUE: "aero" search returns different products than empty search!');
-      }
-      
-      // Return the complete product set we found
-      const allProducts = Array.from(allUniqueProducts.values());
-      console.log('🎯 Final complete product set:', allProducts.length, 'unique products');
-      
-      return {
-        aeroResponse,
-        emptyResponse,
-        onlyInAero,
-        onlyInEmpty,
-        allUniqueProducts: allProducts,
-        totalUniqueCount: allUniqueProducts.size
-      };
-    } catch (error) {
-      console.error('❌ Search comparison test failed:', error);
-      return null;
-    }
-  };
+  // const testSearchComparison = async () => {
+  //   try {
+  //     console.log('🧪 === SEARCH COMPARISON TEST ===');
+  //     
+  //     // Test 1: Search for "aero" to find Aerostiletto
+  //     console.log('🔍 Test 1: Searching for "aero"...');
+  //     const aeroResponse = await apiService.searchByText("aero", 0);
+  //     console.log(`📊 "aero" search returned: ${aeroResponse.results?.length || 0} results`);
+  //     const aeroProducts = aeroResponse.results?.map(p => ({
+  //       id: p.id,
+  //       name: p.payload.name,
+  //       score: p.score
+  //     })) || [];
+  //     console.log('🎯 "aero" products:', aeroProducts);
+  //     
+  //     // Test 2: Empty search (current "All Products" approach)
+  //     console.log('🔍 Test 2: Empty search (current All Products)...');
+  //     const emptyResponse = await apiService.searchByText("", 0);
+  //     console.log(`📊 Empty search returned: ${emptyResponse.results?.length || 0} results`);
+  //     const emptyProducts = emptyResponse.results?.map(p => ({
+  //       id: p.id,
+  //       name: p.payload.name,
+  //       score: p.score
+  //     })) || [];
+  //     console.log('🎯 Empty search products:', emptyProducts);
+  //     
+  //     // Test 3: Search for "*" (wildcard)
+  //     console.log('🔍 Test 3: Searching for "*" (wildcard)...');
+  //     const wildcardResponse = await apiService.searchByText("*", 0);
+  //     console.log(`📊 "*" search returned: ${wildcardResponse.results?.length || 0} results`);
+  //     
+  //     // Test 4: Use specific known product names to find all products
+  //     const knownProductNames = [
+  //       "Fyta", "Aerostiletto", "zoltrasports", "annux", "bedrop", "bee", "dogs-guard",
+  //       // Add some variations and partial matches
+  //       "fyta", "aero", "zoltra", "bee", "dog", "guard",
+  //       // Try some other known patterns
+  //       "stiletto", "sports", "drop", "bed"
+  //     ];
+  //     const allUniqueProducts = new Map();
+  //     
+  //     // Add products from all searches to find complete set
+  //     [aeroResponse, emptyResponse, wildcardResponse].forEach(response => {
+  //       response.results?.forEach(product => {
+  //         allUniqueProducts.set(product.id, product);
+  //       });
+  //     });
+  //     
+  //     for (const searchTerm of knownProductNames) {
+  //       console.log(`🔍 Testing search term: "${searchTerm}"`);
+  //       try {
+  //         const response = await apiService.searchByText(searchTerm, 0);
+  //         console.log(`📊 "${searchTerm}" search returned: ${response.results?.length || 0} results`);
+  //         
+  //         const sizeBefore = allUniqueProducts.size;
+  //         response.results?.forEach(product => {
+  //           allUniqueProducts.set(product.id, product);
+  //         });
+  //         const sizeAfter = allUniqueProducts.size;
+  //         
+  //         if (sizeAfter > sizeBefore) {
+  //           const newProducts = sizeAfter - sizeBefore;
+  //           console.log(`🆕 "${searchTerm}" found ${newProducts} NEW products! Total unique: ${sizeAfter}`);
+  //           
+  //           // Log the names of new products found
+  //           const newProductNames = response.results
+  //             ?.filter(p => !Array.from(allUniqueProducts.values()).slice(0, sizeBefore).some(existing => existing.id === p.id))
+  //             .map(p => p.payload.name)
+  //             .slice(0, 3); // First 3 new names
+  //           if (newProductNames?.length) {
+  //             console.log(`🎯 New products include: ${newProductNames.join(', ')}${newProductNames.length < response.results.length - (sizeAfter - newProducts) ? '...' : ''}`);
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.log(`❌ Search for "${searchTerm}" failed:`, error);
+  //       }
+  //     }
+  //     
+  //     console.log(`🎯 Total unique products found across all searches: ${allUniqueProducts.size}`);
+  //     
+  //     // Compare results
+  //     console.log('🔍 === COMPARISON RESULTS ===');
+  //     const aeroNames = new Set(aeroProducts.map(p => p.name));
+  //     const emptyNames = new Set(emptyProducts.map(p => p.name));
+  //     
+  //     const onlyInAero = aeroProducts.filter(p => !emptyNames.has(p.name));
+  //     const onlyInEmpty = emptyProducts.filter(p => !aeroNames.has(p.name));
+  //     
+  //     console.log('🔥 Products ONLY in "aero" search:', onlyInAero);
+  //     console.log('🔥 Products ONLY in empty search:', onlyInEmpty);
+  //     
+  //     if (onlyInAero.length > 0) {
+  //       console.log('✅ FOUND THE ISSUE: "aero" search returns different products than empty search!');
+  //     }
+  //     
+  //     // Return the complete product set we found
+  //     const allProducts = Array.from(allUniqueProducts.values());
+  //     console.log('🎯 Final complete product set:', allProducts.length, 'unique products');
+  //     
+  //     return {
+  //       aeroResponse,
+  //       emptyResponse,
+  //       onlyInAero,
+  //       onlyInEmpty,
+  //       allUniqueProducts: allProducts,
+  //       totalUniqueCount: allUniqueProducts.size
+  //     };
+  //   } catch (error) {
+  //     console.error('❌ Search comparison test failed:', error);
+  //     return null;
+  //   }
+  // };
 
   // Load all products on component mount
   const loadAllProducts = async () => {
@@ -2363,7 +2362,7 @@ export default function App() {
                     className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
                     style={{ color: "#C0C5CA" }}
                   />
-                  <Input
+                  <input
                     type="text"
                     placeholder="Produkt suchen ..."
                     value={searchQuery}
@@ -2516,7 +2515,7 @@ export default function App() {
                 "Aktuelle Staffel",
                 "Letzte Folge",
                 "Investoren-Deals",
-              ].map((suggestion, index) => (
+              ].map((suggestion, _) => (
                 <button
                   key={suggestion}
                   onClick={() => {
@@ -4571,7 +4570,7 @@ export default function App() {
                                       src={search.imageUrl} 
                                       alt="Uploaded search image"
                                       className="w-full max-w-[120px] h-auto rounded-lg mb-2"
-                                      onError={(e) => {
+                                      onError={(_) => {
                                         console.log('Image failed to load:', search.imageUrl);
                                       }}
                                     />
@@ -4649,7 +4648,7 @@ export default function App() {
                           className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
                           style={{ color: "#C0C5CA" }}
                         />
-                        <Input
+                        <input
                           type="text"
                           placeholder="Produkt suchen ..."
                           value={splitScreenSearchQuery}
