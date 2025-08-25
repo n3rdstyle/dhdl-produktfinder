@@ -425,14 +425,6 @@ export class ProductMapper {
       "Set: 5× Beams + WLAN Hub"
     ];
     
-    // Aerostiletto products - Ralf Dümmel
-    const aerostilettoProducts = [
-      "Aerostiletto Black",
-      "Aerostiletto Duo Pack",
-      "Aerostiletto Beige",
-      "Aerostiletto" // Cover any Aerostiletto product
-    ];
-    
     // Check if the product name matches any FYTA products
     if (fytaProducts.some(fytaName => productName.includes(fytaName) || fytaName.includes(productName))) {
       return "Carsten Maschmeyer & Jana Ensthaler";

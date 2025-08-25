@@ -2,7 +2,6 @@ import { motion } from "motion/react";
 import {
   Search,
   Upload,
-  Image,
   X,
   ExternalLink,
   Star,
@@ -15,7 +14,7 @@ import {
 import { Input } from "./components/ui/input";
 import { useState, useEffect, useRef } from "react";
 import { apiService } from "./services/api";
-import { ProductMapper } from "./services/productMapper";
+import { ProductMapper, type DummyProduct } from "./services/productMapper";
 import Component1739SendungslogoHoehleDerLoewen1 from "./imports/1739SendungslogoHoehleDerLoewen1";
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
 // import newLogo from "figma:asset/c0fc08fb8ac086100ef05688f165334af6e75dcc.png";
@@ -593,147 +592,6 @@ const legalPagesContent = {
   }
 };
 
-// Dummy Höhle der Löwen Produkte
-const dummyProducts = [
-  {
-    id: 1,
-    name: "BIOM8",
-    description:
-      "Probiotische Nahrungsergänzung für die Darmgesundheit mit 8 verschiedenen Bakterienstämmen",
-    price: "49,90",
-    originalPrice: "69,90",
-    investor: "Judith Williams",
-    season: "Staffel 12",
-    image:
-      "https://images.unsplash.com/photo-1559181567-c3190ca9959b?w=400&h=300&fit=crop",
-    rating: 4.6,
-    reviews: 1247,
-    category: "Gesundheit & Beauty",
-    product_url: "https://example.com/biom8",
-  },
-  {
-    id: 2,
-    name: "Ankerkraut",
-    description:
-      "Premium Gewürzmischungen und Grillrubs für außergewöhnliche Geschmackserlebnisse",
-    price: "12,90",
-    originalPrice: null,
-    investor: "Frank Thelen",
-    season: "Staffel 6",
-    image:
-      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&h=300&fit=crop",
-    rating: 4.8,
-    reviews: 2156,
-    category: "Küche & Haushalt",
-    product_url: "https://example.com/ankerkraut",
-  },
-  {
-    id: 3,
-    name: "Waterdrop",
-    description:
-      "Microdrinks: Natürliche Vitamine und Geschmack für dein Wasser - ohne Zucker",
-    price: "29,99",
-    originalPrice: "39,99",
-    investor: "Ralf Dümmel",
-    season: "Staffel 9",
-    image:
-      "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop",
-    rating: 4.4,
-    reviews: 892,
-    category: "Gesundheit & Fitness",
-  },
-  {
-    id: 4,
-    name: "KLEAN KANTEEN",
-    description:
-      "Nachhaltige Edelstahl-Trinkflaschen für umweltbewusste Menschen",
-    price: "34,95",
-    originalPrice: null,
-    investor: "Dagmar Wöhrl",
-    season: "Staffel 8",
-    image:
-      "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&h=300&fit=crop",
-    rating: 4.7,
-    reviews: 1563,
-    category: "Sport & Outdoor",
-  },
-  {
-    id: 5,
-    name: "SNOCKS",
-    description:
-      "Nachhaltige Socken und Unterwäsche aus Bio-Baumwolle - fair produziert",
-    price: "19,95",
-    originalPrice: "24,95",
-    investor: "Nils Glagau",
-    season: "Staffel 7",
-    image:
-      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=300&fit=crop",
-    rating: 4.5,
-    reviews: 2341,
-    category: "Fashion & Lifestyle",
-  },
-  // Staffel 16 Produkte
-  {
-    id: 6,
-    name: "CleanKids",
-    description:
-      "��kologische Kinderprodukte und Spielwaren aus nachhaltigen Materialien",
-    price: "24,90",
-    originalPrice: "29,90",
-    investor: "Carsten Maschmeyer",
-    season: "Staffel 16",
-    image:
-      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
-    rating: 4.7,
-    reviews: 1834,
-    category: "Kinder & Familie",
-  },
-  {
-    id: 7,
-    name: "FitFood",
-    description:
-      "Gesunde Fertiggerichte ohne Zusatzstoffe - frisch und nährstoffreich",
-    price: "8,95",
-    originalPrice: null,
-    investor: "Judith Williams",
-    season: "Staffel 16",
-    image:
-      "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=300&fit=crop",
-    rating: 4.3,
-    reviews: 967,
-    category: "Food & Beverage",
-  },
-  {
-    id: 8,
-    name: "SmartHome Pro",
-    description:
-      "Intelligente Hausautomation für mehr Komfort und Energieeffizienz",
-    price: "149,00",
-    originalPrice: "199,00",
-    investor: "Frank Thelen",
-    season: "Staffel 16",
-    image:
-      "https://images.unsplash.com/photo-1558618047-fcd9c4d4b96a?w=400&h=300&fit=crop",
-    rating: 4.6,
-    reviews: 2567,
-    category: "Tech & Innovation",
-  },
-  {
-    id: 9,
-    name: "GreenClean",
-    description:
-      "Umweltfreundliche Reinigungsmittel auf Basis natürlicher Inhaltsstoffe",
-    price: "16,90",
-    originalPrice: "21,90",
-    investor: "Ralf Dümmel",
-    season: "Staffel 16",
-    image:
-      "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400&h=300&fit=crop",
-    rating: 4.5,
-    reviews: 1456,
-    category: "Küche & Haushalt",
-  },
-];
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -746,9 +604,9 @@ export default function App() {
   >(null);
   const [isLoading, setIsLoading] = useState(true);
   const [filteredProducts, setFilteredProducts] =
-    useState<typeof dummyProducts>([]);
+    useState<DummyProduct[]>([]);
   const [originalSearchResults, setOriginalSearchResults] =
-    useState<typeof dummyProducts>([]);
+    useState<DummyProduct[]>([]);
   const [currentSearchTerm, setCurrentSearchTerm] =
     useState("");
   const [searchHistory, setSearchHistory] = useState<Array<{
@@ -815,7 +673,7 @@ export default function App() {
     showBlog: boolean;
     selectedArticle: number | null;
     currentSearchTerm: string;
-    filteredProducts: typeof dummyProducts;
+    filteredProducts: DummyProduct[];
     showProductSearch: boolean;
   } | null>(null);
 
@@ -915,7 +773,7 @@ export default function App() {
       }
 
       try {
-        let resultProducts = [];
+        let resultProducts: DummyProduct[] = [];
         
         if (selectedImage && !searchQuery.trim()) {
           // Image only search - use API with high threshold for precision
@@ -991,13 +849,13 @@ export default function App() {
                 fuzzyMatch(product.category, searchTerm) ||
                 fuzzyMatch(product.investor, searchTerm) ||
                 fuzzyMatch(product.season, searchTerm) ||
-                fuzzyMatch(product.episode, searchTerm)) {
+                fuzzyMatch((product as any).episode || "", searchTerm)) {
               return true;
             }
             
             // Check tags if available
-            if (product.tags && Array.isArray(product.tags)) {
-              for (const tag of product.tags) {
+            if ((product as any).tags && Array.isArray((product as any).tags)) {
+              for (const tag of (product as any).tags) {
                 if (fuzzyMatch(tag, searchTerm)) {
                   return true;
                 }
@@ -1005,7 +863,7 @@ export default function App() {
             }
             
             // Check context if available
-            if (product.context && fuzzyMatch(product.context, searchTerm)) {
+            if ((product as any).context && fuzzyMatch((product as any).context, searchTerm)) {
               return true;
             }
             
@@ -2214,13 +2072,13 @@ export default function App() {
               fuzzyMatch(product.category, searchTerm) ||
               fuzzyMatch(product.investor, searchTerm) ||
               fuzzyMatch(product.season, searchTerm) ||
-              fuzzyMatch(product.episode, searchTerm)) {
+              fuzzyMatch((product as any).episode || "", searchTerm)) {
             return true;
           }
           
           // Check tags if available
-          if (product.tags && Array.isArray(product.tags)) {
-            for (const tag of product.tags) {
+          if ((product as any).tags && Array.isArray((product as any).tags)) {
+            for (const tag of (product as any).tags) {
               if (fuzzyMatch(tag, searchTerm)) {
                 return true;
               }
@@ -2228,7 +2086,7 @@ export default function App() {
           }
           
           // Check context if available
-          if (product.context && fuzzyMatch(product.context, searchTerm)) {
+          if ((product as any).context && fuzzyMatch((product as any).context, searchTerm)) {
             return true;
           }
           
